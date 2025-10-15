@@ -1,42 +1,57 @@
-name: .NET Build, Test and Publish
+name: .NET Build, Test, and Publish (NewsPaper Projects)
 
-# Trigger workflow on push or pull request to main
 on:
   push:
-    branches: [ main ]
+    branches: [ "main" ]
   pull_request:
-    branches: [ main ]
+    branches: [ "main" ]
 
 jobs:
   build:
-    name: Build and Test SPMminorproject
     runs-on: windows-latest
 
     steps:
     # Step 1: Checkout repository
     - name: Checkout repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
+
+    # Step 2: Setup .NET SDK (you are using .NET 9.0)
+    - name: Setup .NET 9.0
+      uses: actions/setup-dotnet@v4
       with:
-        fetch-depth: 0   # Fetch full history to avoid Git errors
+        dotnet-version: '9.0.305'
 
-    # Step 2: Setup .NET
-    - name: Setup .NET SDK
-      uses: actions/setup-dotnet@v3
+    # Step 3: Restore dependencies for both solutions
+    - name: Restore dependencies for WebApp
+      run: dotnet restore "E:/vs code/NewsPaperWebApp/NewsPaperWebApp.sln"
+
+    - name: Restore dependencies for API
+      run: dotnet restore "E:/vs code/NewsPaperAPI/NewsPaperAPI.sln"
+
+    # Step 4: Build both solutions
+    - name: Build WebApp
+      run: dotnet build "E:/vs code/NewsPaperWebApp/NewsPaperWebApp.sln" --configuration Release --no-restore
+
+    - name: Build API
+      run: dotnet build "E:/vs code/NewsPaperAPI/NewsPaperAPI.sln" --configuration Release --no-restore
+
+    # Step 5: (Optional) Run tests if you have test projects
+    - name: Run Tests (WebApp)
+      run: dotnet test "E:/vs code/NewsPaperWebApp/NewsPaperWebApp.sln" --no-build --verbosity normal
+
+    - name: Run Tests (API)
+      run: dotnet test "E:/vs code/NewsPaperAPI/NewsPaperAPI.sln" --no-build --verbosity normal
+
+    # Step 6: Publish both solutions
+    - name: Publish WebApp
+      run: dotnet publish "E:/vs code/NewsPaperWebApp/NewsPaperWebApp.sln" -c Release -o ./publish/NewsPaperWebApp
+
+    - name: Publish API
+      run: dotnet publish "E:/vs code/NewsPaperAPI/NewsPaperAPI.sln" -c Release -o ./publish/NewsPaperAPI
+
+    # Step 7: Upload build artifacts
+    - name: Upload Artifacts
+      uses: actions/upload-artifact@v4
       with:
-        dotnet-version: '8.0.x'   # Change if your project uses another version
-
-    # Step 3: Restore dependencies
-    - name: Restore NuGet packages
-      run: dotnet restore
-
-    # Step 4: Build project
-    - name: Build project
-      run: dotnet build --configuration Release --no-restore
-
-    # Step 5: Run tests
-    - name: Run tests
-      run: dotnet test --no-build --verbosity normal
-
-    # Step 6: Publish (optional - creates deployable files)
-    - name: Publish project
-      run: dotnet publish -c Release -o publish
+        name: published-artifacts
+        path: ./publish
