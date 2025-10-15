@@ -21,20 +21,6 @@ jobs:
       with:
         dotnet-version: '9.0.305'
 
-    # Step 3: Restore dependencies (API first, then WebApp)
-    - name: Restore dependencies for API
-      run: dotnet restore "./NewsPaperAPI/NewsPaperAPI.sln"
-
-    - name: Restore dependencies for WebApp
-      run: dotnet restore "./NewsPaperWebApp/NewsPaperWebApp.sln"
-
-    # Step 4: Build both solutions (API first, then WebApp)
-    - name: Build API
-      run: dotnet build "./NewsPaperAPI/NewsPaperAPI.sln" --configuration Release --no-restore
-
-    - name: Build WebApp
-      run: dotnet build "./NewsPaperWebApp/NewsPaperWebApp.sln" --configuration Release --no-restore
-
     # Step 5: Run tests (optional)
     - name: Run Tests (API)
       run: dotnet test "./NewsPaperAPI/NewsPaperAPI.sln" --no-build --verbosity normal
