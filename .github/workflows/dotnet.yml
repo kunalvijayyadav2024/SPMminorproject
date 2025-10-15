@@ -1,5 +1,6 @@
-name: .NET Build and Test
+name: .NET Build, Test and Publish
 
+# Trigger workflow on push or pull request to main
 on:
   push:
     branches: [ main ]
@@ -8,25 +9,34 @@ on:
 
 jobs:
   build:
+    name: Build and Test SPMminorproject
     runs-on: windows-latest
 
     steps:
+    # Step 1: Checkout repository
     - name: Checkout repository
       uses: actions/checkout@v3
+      with:
+        fetch-depth: 0   # Fetch full history to avoid Git errors
 
-    - name: Setup .NET
+    # Step 2: Setup .NET
+    - name: Setup .NET SDK
       uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: '8.0.x'
+        dotnet-version: '8.0.x'   # Change if your project uses another version
 
-    - name: Restore dependencies
+    # Step 3: Restore dependencies
+    - name: Restore NuGet packages
       run: dotnet restore
 
-    - name: Build
+    # Step 4: Build project
+    - name: Build project
       run: dotnet build --configuration Release --no-restore
 
-    - name: Test
+    # Step 5: Run tests
+    - name: Run tests
       run: dotnet test --no-build --verbosity normal
 
-    - name: Publish (optional)
+    # Step 6: Publish (optional - creates deployable files)
+    - name: Publish project
       run: dotnet publish -c Release -o publish
