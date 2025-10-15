@@ -23,31 +23,31 @@ jobs:
 
     # Step 3: Restore dependencies (API first, then WebApp)
     - name: Restore dependencies for API
-      run: dotnet restore "./I Kunal/NewsPaperAPI/NewsPaperAPI.sln"
+      run: dotnet restore "./NewsPaperAPI/NewsPaperAPI.sln"
 
     - name: Restore dependencies for WebApp
-      run: dotnet restore "./I Kunal/NewsPaperWebApp/NewsPaperWebApp.sln"
+      run: dotnet restore "./NewsPaperWebApp/NewsPaperWebApp.sln"
 
     # Step 4: Build both solutions (API first, then WebApp)
     - name: Build API
-      run: dotnet build "./I Kunal/NewsPaperAPI/NewsPaperAPI.sln" --configuration Release --no-restore
+      run: dotnet build "./NewsPaperAPI/NewsPaperAPI.sln" --configuration Release --no-restore
 
     - name: Build WebApp
-      run: dotnet build "./I Kunal/NewsPaperWebApp/NewsPaperWebApp.sln" --configuration Release --no-restore
+      run: dotnet build "./NewsPaperWebApp/NewsPaperWebApp.sln" --configuration Release --no-restore
 
-    # Step 5: (Optional) Run tests if any test projects exist
+    # Step 5: Run tests (optional)
     - name: Run Tests (API)
-      run: dotnet test "./I Kunal/NewsPaperAPI/NewsPaperAPI.sln" --no-build --verbosity normal
+      run: dotnet test "./NewsPaperAPI/NewsPaperAPI.sln" --no-build --verbosity normal
 
     - name: Run Tests (WebApp)
-      run: dotnet test "./I Kunal/NewsPaperWebApp/NewsPaperWebApp.sln" --no-build --verbosity normal
+      run: dotnet test "./NewsPaperWebApp/NewsPaperWebApp.sln" --no-build --verbosity normal
 
     # Step 6: Publish both projects (API first, then WebApp)
     - name: Publish API
-      run: dotnet publish "./I Kunal/NewsPaperAPI/NewsPaperAPI.sln" -c Release -o ./publish/NewsPaperAPI
+      run: dotnet publish "./NewsPaperAPI/NewsPaperAPI.sln" -c Release -o ./publish/NewsPaperAPI
 
     - name: Publish WebApp
-      run: dotnet publish "./I Kunal/NewsPaperWebApp/NewsPaperWebApp.sln" -c Release -o ./publish/NewsPaperWebApp
+      run: dotnet publish "./NewsPaperWebApp/NewsPaperWebApp.sln" -c Release -o ./publish/NewsPaperWebApp
 
     # Step 7: Upload build artifacts
     - name: Upload Artifacts
